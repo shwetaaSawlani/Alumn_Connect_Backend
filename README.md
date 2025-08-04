@@ -1,0 +1,17 @@
+<br>
+.env Sample
+<br>
+MONGODB_URI=
+<br>
+JWT_SECRET=
+<br>
+CORS_ORIGIN =
+<br>
+CLOUDINARY_CLOUD_NAME=
+<br>
+CLOUDINARY_API_KEY=
+<br>
+CLOUDINARY_API_SECRET=
+<br>
+
+PORT=

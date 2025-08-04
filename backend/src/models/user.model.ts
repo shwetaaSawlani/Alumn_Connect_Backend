@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
 export interface IUser extends Document {
@@ -23,13 +22,10 @@ export interface IUser extends Document {
     codechef?: string;
     hackerRank?: string;
     leetcode?: string;
-
-
     isPrivate: boolean;
     followers: mongoose.Types.ObjectId[];
     following: mongoose.Types.ObjectId[];
     followRequests: mongoose.Types.ObjectId[];
-
 
     //   isPasswordCorrect: (password: string) => Promise<boolean>;
     //   generateAccessToken: () => string;
@@ -245,8 +241,6 @@ userSchema.pre("save", function (next) {
 //         }
 //     );
 // };
-
-
 
 
 export const User = mongoose.model<IUser>('User', userSchema);

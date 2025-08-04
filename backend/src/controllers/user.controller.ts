@@ -109,6 +109,7 @@ export const updateUserProfile = asyncHandler(async (req: Request, res: Response
         user.type = type;
     }
     const avatarLocalPath = req.file?.path as string;
+
     if (avatarLocalPath) {
         const avatarUrl = await uploadOnCloudinary(avatarLocalPath);
         user.avatar = avatarUrl as string;
@@ -133,6 +134,7 @@ export const deleteUserById = asyncHandler(async (req: Request, res: Response) =
     if (!user) {
         throw new ApiError(404, `User not found with the given ID/ Unable to delete the user with userId : ${trimmedId}`);
     }
+
     res.status(200).json(
         new ApiResponse(200, {}, `User deleted successfully with userId ${trimmedId}`)
     );
@@ -161,13 +163,16 @@ export const getUserByName = asyncHandler(async (req: Request, res: Response) =>
 })
 
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
+
     const { userId } = req.params;
     const trimmedId = userId?.trim();
 
     if (!trimmedId) {
         throw new ApiError(400, "Id is required to get the user");
     }
+
     const user = await User.findById(userId);
+
     if (!user) {
         throw new ApiError(404, `user not found with given id ${userId}`);
     }
@@ -179,12 +184,14 @@ export const getUserById = asyncHandler(async (req: Request, res: Response) => {
 
 
 export const getUsersByGraduationyear = asyncHandler(async (req: Request, res: Response) => {
+
     const { year } = req.params;
     const trimmedYear = year?.trim();
 
     if (!trimmedYear) {
         throw new ApiError(400, " Graduation year is required ")
     }
+
     const filter: any = { graduationyear: trimmedYear };
     const paginationResult = await applyPaginationAndSorting(req, filter);
 
@@ -195,12 +202,14 @@ export const getUsersByGraduationyear = asyncHandler(async (req: Request, res: R
 
 
 export const getUsersBycurrentcompany = asyncHandler(async (req: Request, res: Response) => {
+
     const { company } = req.params;
     const trimmedCompany = company?.trim();
 
     if (!trimmedCompany) {
         throw new ApiError(400, " current company  is required ")
     }
+
     const filter: any = { currentcompany: trimmedCompany };
     const paginationResult = await applyPaginationAndSorting(req, filter);
 
@@ -210,6 +219,7 @@ export const getUsersBycurrentcompany = asyncHandler(async (req: Request, res: R
 })
 
 export const getUsersByDepartment = asyncHandler(async (req: Request, res: Response) => {
+
     const { department } = req.params;
     const trimmedDepartment = department?.trim();
 
@@ -225,6 +235,7 @@ export const getUsersByDepartment = asyncHandler(async (req: Request, res: Respo
 })
 
 export const getUsersByJobtitle = asyncHandler(async (req: Request, res: Response) => {
+
     const { designation } = req.params;
     const trimmedDesignation = designation?.trim();
 
@@ -240,6 +251,7 @@ export const getUsersByJobtitle = asyncHandler(async (req: Request, res: Respons
 })
 
 export const getUsersByIndustry = asyncHandler(async (req: Request, res: Response) => {
+
     const { industry } = req.params;
     const trimmedindustry = industry?.trim();
 
@@ -257,7 +269,6 @@ export const getUsersByIndustry = asyncHandler(async (req: Request, res: Respons
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 
     const filter: any = {};
-
     const paginationResult = await applyPaginationAndSorting(req, filter);
 
     res.status(200).json(

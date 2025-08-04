@@ -3,38 +3,38 @@ import mongoose, { Schema, Document, model } from 'mongoose';
 export interface IPost extends Document {
   description: string;
   mediaurl: string;
-  author: mongoose.Schema.Types.ObjectId; 
+  author: mongoose.Schema.Types.ObjectId;
   comments: mongoose.Schema.Types.ObjectId[];
   likes: mongoose.Schema.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
- 
+
 }
 
 const postSchema: Schema<IPost> = new Schema(
   {
     description: {
       type: String,
-      required: true, 
+      required: true,
       trim: true,
-      maxlength: 500, 
+      maxlength: 500,
     },
     mediaurl: {
-      type: String, 
+      type: String,
       required: true,
     },
     author: {
       type: Schema.Types.ObjectId,
-      ref: 'User', 
+      ref: 'User',
       required: true,
     },
-     comments: [
+    comments: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Comment',
       },
     ],
-      likes: [
+    likes: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Like',

@@ -1,5 +1,4 @@
 
-
 import { PasswordValidator } from 'password-validator-pro';
 
 const validator = new PasswordValidator({
@@ -12,4 +11,4 @@ const validator = new PasswordValidator({
   combineErrors: false,        // Set this to true to combine all errors into one message
 });
 
-export{validator}
+export { validator }

@@ -23,16 +23,17 @@ export const verifyUserTokenFromCookie = asyncHandler(async (req: Request, res: 
   const accessToken = req.cookies?.accessToken;
 
   if (!accessToken) {
-
     throw new ApiError(401, "Access Denied / Unauthorized request: No access token cookie provided.");
   }
 
   try {
 
     const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET as string) as JwtPayload;
+
     if (!decodedToken || !decodedToken.id) {
       throw new ApiError(401, "Invalid token payload: User ID missing.");
     }
+
     const user = await User.findById(decodedToken.id).select('-password -refreshToken') as JwtPayload;
 
     if (!user) {
@@ -43,12 +44,15 @@ export const verifyUserTokenFromCookie = asyncHandler(async (req: Request, res: 
 
     console.log("User verified from accessToken cookie:", user);
     next();
+
   } catch (error: any) {
 
     console.error("Access token verification failed from cookie:", error.message);
+
     if (error.name === 'TokenExpiredError') {
       throw new ApiError(401, "Access Denied / Unauthorized request: Access token expired. Please log in again.");
     }
+    
     if (error.name === 'JsonWebTokenError') {
       throw new ApiError(401, "Access Denied / Unauthorized request: Invalid access token. Please log in again.");
     }

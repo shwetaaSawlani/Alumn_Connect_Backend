@@ -9,13 +9,11 @@ import mongoose from "mongoose";
 
 
 export const createComment = asyncHandler(async (req: Request, res: Response) => {
+
   const { id } = req.params;
   const { content } = req.body;  
   const userId = req.user?.id;   
  
-
-  console.log(`postId`, id)
-
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid Post ID format.");
   }
@@ -27,6 +25,7 @@ export const createComment = asyncHandler(async (req: Request, res: Response) =>
   }
 
   const postExists = await Post.findById(id);
+
   if (!postExists) {
     throw new ApiError(404, "Post not found. Cannot add comment to a non-existent post.");
   }
@@ -41,22 +40,22 @@ export const createComment = asyncHandler(async (req: Request, res: Response) =>
     throw new ApiError(500, "Something went wrong while creating the comment.");
   }
 
-  
   res.status(201).json(new ApiResponse(201, comment, "Comment created successfully."));
 });
 
 
 export const getCommentsForPost = asyncHandler(async (req: Request, res: Response) => {
+
   const { postId } = req.params; 
 
   if (!mongoose.Types.ObjectId.isValid(postId)) {
     throw new ApiError(400, "Invalid Post ID format.");
   }
 
-
   const comments = await Comment.find({ post: postId })
     .populate('author', 'username avatar') 
     .sort({ createdAt: 1 }); 
+
   if (!comments || comments.length === 0) {
     return res.status(200).json(new ApiResponse(200, [], "No comments found for this post yet."));
   }
@@ -66,10 +65,10 @@ export const getCommentsForPost = asyncHandler(async (req: Request, res: Respons
 
 
 export const updateComment = asyncHandler(async (req: Request, res: Response) => {
+
   const { commentId } = req.params;
   const { content } = req.body;    
   const userId = req.user?.id;    
-
 
   if (!mongoose.Types.ObjectId.isValid(commentId)) {
     throw new ApiError(400, "Invalid Comment ID format.");
@@ -100,16 +99,17 @@ export const updateComment = asyncHandler(async (req: Request, res: Response) =>
 
 
 export const deleteComment = asyncHandler(async (req: Request, res: Response) => {
+
   const { commentId } = req.params;
   const userId = req.user?.id;    
 
   if (!mongoose.Types.ObjectId.isValid(commentId)) {
     throw new ApiError(400, "Invalid Comment ID format.");
   }
+
   if (!userId) {
     throw new ApiError(401, "Unauthorized: User not logged in.");
   }
-
 
   const comment: IComment | null = await Comment.findById(commentId);
 
@@ -117,14 +117,11 @@ export const deleteComment = asyncHandler(async (req: Request, res: Response) =>
     throw new ApiError(404, "Comment not found.");
   }
 
-
   if (comment.author.toString() !== userId.toString()) {
     throw new ApiError(403, "Forbidden: You are not authorized to delete this comment.");
   }
 
-
   await comment.deleteOne(); 
-
   
   res.status(200).json(new ApiResponse(200, null, "Comment deleted successfully."));
 });

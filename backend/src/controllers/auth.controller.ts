@@ -9,20 +9,17 @@ import { validator } from "../utils/PasswordValidator"
 import { ApiResponse } from "../utils/ApiResponse";
 
 
-
 const generateAccessToken = (user: InstanceType<typeof User>) => {
     return jwt.sign({ id: user._id, type: user.type }, process.env.JWT_SECRET!, {
         expiresIn: '15m',
     });
 };
 
-
 const generateRefreshToken = (user: InstanceType<typeof User>) => {
     return jwt.sign({ id: user._id, type: user.type }, process.env.JWT_SECRET!, {
         expiresIn: '7d',
     });
 };
-
 
 export const isValidPhone = (phone: string) => /^\d{10}$/.test(phone);
 export const isValidRollNo = (rollNo: string) => /^\d{4}[a-zA-Z]{2}\d{6}$/.test(rollNo);
@@ -164,8 +161,6 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
         )
     );
 });
-
-
 
 export const signIn = asyncHandler(async (req: Request, res: Response) => {
     const { rollNo, phoneNumber, email, password } = req.body;
@@ -311,6 +306,44 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
     }
 });
 
+export const generateAccessTokenFromRefreshToken = asyncHandler(async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        throw new ApiError(400, "Refresh Token not found");
+    }
+
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET as string) as { id: string };
+
+        if (!decoded || !decoded.id) {
+            throw new ApiError(401, "Refresh token is invalid or expired. Please log in again.");
+        }
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            throw new ApiError(401, "Invalid refresh token: User not found.");
+        }
+        if (user.refreshToken !== refreshToken) {
+            throw new ApiError(401, "Refresh token has been revoked. Please log in again.");
+        }
+
+        const newAccessToken = generateAccessToken(user);
+
+        if (!newAccessToken) {
+            throw new ApiError(500, "Failed to generate a new access token.");
+        }
+        res.cookie('accessToken', newAccessToken, {
+            httpOnly: true,
+            secure: false,
+        });
+
+        res.status(200).json(new ApiResponse(200, { accessToken: newAccessToken }, "New access token generated successfully."));
+
+    } catch (error: any) {
+        console.error("Refresh token error:", error.message);
+        throw new ApiError(401, "Refresh token is invalid or expired. Please log in again.");
+    }
+
+});
 
 
 

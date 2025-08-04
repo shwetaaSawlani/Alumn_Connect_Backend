@@ -1,13 +1,5 @@
 import { Router } from "express";
-import {
-  toggleFollow,
-  acceptFollowRequest,
-  rejectFollowRequest,
-  getFollowers,
-  getFollowing,
-  getPendingFollowRequests,
-  toggleAccountPrivacy,
-} from "../controllers/social.controller";
+import { toggleFollow, acceptFollowRequest, rejectFollowRequest, getFollowers, getFollowing, getPendingFollowRequests, toggleAccountPrivacy, } from "../controllers/social.controller";
 import { verifyUserTokenFromCookie } from "../middlewares/auth.middleware";
 
 const router = Router();
